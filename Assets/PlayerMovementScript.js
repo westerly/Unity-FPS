@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-var walkAcceleration : float = 800;
+var walkAcceleration : float = 4000;
 // Cette variable permet d'attenuer le controle du perso quand il est dans les airs mais celui ci peut toujours être contrôlé 
 var walkAccelAirRation : float = 0.5;
 // Variable servant à paramétré la vitesse que met le perso à s'arrêter ou a changer de direction
