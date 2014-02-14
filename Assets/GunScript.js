@@ -38,6 +38,10 @@ var waitTilNextFire : float = 0;
 var bullet : GameObject;
 var bulletSpawn : GameObject;
 
+// Permet de simuler la perte de précision quand on tire
+var shootAngleRandomizationAiming : float = 5;
+var shootAngleRandomizationNotAiming : float = 15;
+
 function Update () {
 	
 	// Si le bouton tir est enfoncé
@@ -47,6 +51,8 @@ function Update () {
 		 	if(bullet)
 		 	// On instancie une bullet à la position et à l'angle de rotation de bulletSpawn (situé juste devant le gun)
 		 		Instantiate(bullet, bulletSpawn.transform.position, bulletSpawn.transform.rotation);
+		 	targetXRotation += (Random.value - 0.5) * Mathf.Lerp(shootAngleRandomizationAiming, shootAngleRandomizationNotAiming, racioHipHold);
+		 	targetYRotation += (Random.value - 0.5) * Mathf.Lerp(shootAngleRandomizationAiming, shootAngleRandomizationNotAiming, racioHipHold);
 		 	// Lorsque on a tiré une balle on remet le timer à 1
 		 	waitTilNextFire = 1;
 		}

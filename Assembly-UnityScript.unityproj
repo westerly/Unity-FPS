@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\BulletScript.js" />
+     <Compile Include="Assets\DestroyAfterTimeScript.js" />
      <Compile Include="Assets\GunScript.js" />
      <Compile Include="Assets\MouseLookScript.js" />
      <Compile Include="Assets\PlayerMovementScript.js" />

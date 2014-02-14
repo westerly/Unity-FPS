@@ -19,8 +19,7 @@ function Update () {
 			// Un Quaternion peut aussi représenter la roataion de ce plan par rapport à l'axe du vecteur normal mais c'est inutile ici
 			// On laisse donc le 2ème param de LookRotation vide
 			Instantiate(decalHitWall, hit.point + (hit.normal * floatInFrontOfWall), Quaternion.LookRotation(hit.normal));
-		// gameObject est l'objet bullet
-		Destroy(gameObject);
 	}
-	
+	// gameObject est l'objet bullet
+	Destroy(gameObject);
 }
