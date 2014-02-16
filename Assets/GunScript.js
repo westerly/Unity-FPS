@@ -42,8 +42,23 @@ var bulletSpawn : GameObject;
 var shootAngleRandomizationAiming : float = 5;
 var shootAngleRandomizationNotAiming : float = 15;
 
+// la distance de recul à chaque tir
+var recoilAmount : float = 0.1;
+// Le temps pour que le gun revienne à sa position initial 
+var recoilRecoverTime : float = 0.2;
+@HideInInspector
+// La position courrant du gun sur l'axe des Z
+var currentRecoilZPos : float;
+@HideInInspector
+var currentRecoilZPosV : float;
+// L'objet permettant de jouer le son d'un tir de gun
+var bulletSound : GameObject;
+
+var muzzleFlash : GameObject;
+
 function Update () {
-	
+	var holdSound : GameObject;
+	var holdMuzzleFlash : GameObject;
 	// Si le bouton tir est enfoncé
 	if(Input.GetButton("Fire1")){
 	// Si on peut tirer
@@ -51,8 +66,16 @@ function Update () {
 		 	if(bullet)
 		 	// On instancie une bullet à la position et à l'angle de rotation de bulletSpawn (situé juste devant le gun)
 		 		Instantiate(bullet, bulletSpawn.transform.position, bulletSpawn.transform.rotation);
+		 	if(bulletSound)
+		 		// Création du son du tir à la position et rotation de bulletSpawn que l'on save dans holdSound
+		 		holdSound = Instantiate(bulletSound, bulletSpawn.transform.position, bulletSpawn.transform.rotation);
+		 	if(muzzleFlash)
+		 		// Création du flash lors du tir
+		 		holdMuzzleFlash = Instantiate(muzzleFlash, bulletSpawn.transform.position, bulletSpawn.transform.rotation);
+		 		
 		 	targetXRotation += (Random.value - 0.5) * Mathf.Lerp(shootAngleRandomizationAiming, shootAngleRandomizationNotAiming, racioHipHold);
 		 	targetYRotation += (Random.value - 0.5) * Mathf.Lerp(shootAngleRandomizationAiming, shootAngleRandomizationNotAiming, racioHipHold);
+		 	currentRecoilZPos -= recoilAmount;
 		 	// Lorsque on a tiré une balle on remet le timer à 1
 		 	waitTilNextFire = 1;
 		}
@@ -63,6 +86,19 @@ function Update () {
 	// Par exemple si fireSpeed vaut 1 (on tir une balle par seconde) Time.deltaTime * 1 est décrémenté à chaque frame
 	// donc waitTillNextFire arrive à 0 (ou un peu moins de 0) en une seconde
 	waitTilNextFire -= Time.deltaTime * fireSpeed;
+	
+	// Si holdSound est intancié
+	if(holdSound)
+		// On place le gun en tant que parent de l'objet son pour que le son "suive" le perso pendant les déplacements
+		holdSound.transform.parent = transform;
+		
+	// Si holdMuzzleFlash est intancié
+	if(holdMuzzleFlash)
+		// On place le gun en tant que parent de l'objet muzzleFlash pour que le flash "suive" le perso pendant les déplacements
+		holdMuzzleFlash.transform.parent = transform;
+		
+	
+	currentRecoilZPos = Mathf.SmoothDamp(currentRecoilZPos, 0, currentRecoilZPosV, recoilRecoverTime);
 	
 	cameraObject.GetComponent(MouseLookScript).currentTargetCameraAngle = zoomAngle;
 	
@@ -79,7 +115,9 @@ function Update () {
 	
 	// Multiplier le vecteur position de l'arme par le Quarternion(0, targetYRotation, 0) permet de lui faire faire une rotation sur l'axe des y d'une valeur de targetYRotation
 	// Cela permet de ne pas se retrouver avec le gun a gauche lorsque on fait tourner le perso
-	transform.position = cameraObject.transform.position + (Quaternion.Euler(targetXRotation, targetYRotation, 0) * Vector3(holdSide * racioHipHold, holdHeight * racioHipHold, 0));
+	transform.position = cameraObject.transform.position + (Quaternion.Euler(targetXRotation, targetYRotation, 0) * Vector3(holdSide * racioHipHold, holdHeight * racioHipHold, 0)
+	// On ajoute cette ligne pour le recul du gun 
+	+ Quaternion.Euler(targetXRotation, targetYRotation, 0) * Vector3(0,0, currentRecoilZPos));
 	// On calcule la rotation du gun sur l'axe des x et des y avec un smoothDamp pour décaler avec la rotation de la camera. Ainsi on croit que l'arme est lourde.
 	targetXRotation = Mathf.SmoothDamp(targetXRotation, cameraObject.GetComponent(MouseLookScript).xRotation, targetXRotationV, rotateSpeed);
 	targetYRotation = Mathf.SmoothDamp(targetYRotation, cameraObject.GetComponent(MouseLookScript).yRotation, targetYRotationV, rotateSpeed);

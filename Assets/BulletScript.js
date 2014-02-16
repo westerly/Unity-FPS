@@ -4,7 +4,7 @@
 var maxDist : float = 10000;
 var decalHitWall : GameObject;
 // La distance par rapport à l'element en colision ou on va dessiner le bullet hole (évite de superposer les textures) 
-var floatInFrontOfWall : float = 0.0001;
+var floatInFrontOfWall : float = 0.01;
 
 function Update () {
 	var hit : RaycastHit;
