@@ -1,5 +1,12 @@
 ﻿#pragma strict
 
+// L'arme courante portée par le player
+var currentGun : GameObject;
+var distToPickUpGun : int = 6;
+var throwGunUpForce : float = 100;
+var throwGunForwardForce : float = 300;
+var waitFrameForSwitchGuns : int = -1;
+
 var walkAcceleration : float = 4000;
 // Cette variable permet d'attenuer le controle du perso quand il est dans les airs mais celui ci peut toujours être contrôlé 
 var walkAccelAirRation : float = 0.5;
@@ -22,6 +29,8 @@ var grounded : boolean = false;
 var maxSlope : float = 60; 
 
 function Update () {
+
+	waitFrameForSwitchGuns -= 1;
 	
 	// On récupère le vecteur mouvement actuel du personnage sur le plan horizontal xy
 	horizontalMovement = Vector2(rigidbody.velocity.x, rigidbody.velocity.z);

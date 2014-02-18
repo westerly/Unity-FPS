@@ -35,7 +35,48 @@ var lookSmoothDamp : float = 0.1;
 @HideInInspector
 var currentAimRacio : float = 1;
 
+// La rapidité des pas du personnage
+var headBobSpeed : float = 1;
+@HideInInspector
+var headBobStepCounter : float;
+// La distance de déplacement de la tete du perso sur l'axe des x (gauche droite)
+var headBobAmountX : float = 1;
+// La distance de déplacement de la tete du perso sur l'axe des y (haut en bas)
+var headBobAmountY : float = 1;
+@HideInInspector
+var parentLastPos : Vector3;
+// Le ratio position de la camera par rapport au perso (si ratio = 0.5 alors la camera est au milieu du perso)
+var eyeHeightRatio : float = 0.5;
+
+function Awake () {
+	// On save la position du parent de la camera qui est le perso dans parentLastPos
+	parentLastPos = transform.parent.position;
+}
+
 function Update () {
+	
+	// Si le perso touche le sol
+	if( transform.parent.GetComponent(PlayerMovementScript).grounded )
+		// On incrémente headBobStepCounter qui va se balader ensuite sur les fonctions sin(x) et cos(2x) 
+		// pour simuler le mouvement de tete du perso
+		// On l'incrémente de la distance parcouru par le perso entre la précedente frame et maintenant
+		// * headBobSpeed pour pouvoir agir avec ce param sur la rapidité des mouvements de tete du perso
+		headBobStepCounter += Vector3.Distance(parentLastPos, transform.parent.position) * headBobSpeed;
+	
+	// On change la position local de la camera sur l'axe des x (donc par rapport au parent qui est le perso) 
+	// par headBobStepCounter sur la fonction Sin(x) * la distance paramétrable et le currentAimRatio
+	// pour pouvoir diminuer l'amplitude du mouvement lorsque on est en mode tir de précision
+	transform.localPosition.x = Mathf.Sin(headBobStepCounter) * headBobAmountX * currentAimRacio;
+	
+	// On utilise Cos(2x) car la fonction a une amplitude deux plus importante que sin(x) et on veut deux mouvements
+	// de la tete de haut en bas pour un mouvement de la tete de gauche a droite
+	// * -1 pour commencer le mouvement de la tete en bas
+	// + on ajuste en fonction du ratio position de la camera par rapport à la taille du perso
+	transform.localPosition.y = (Mathf.Cos(headBobStepCounter * 2) * headBobAmountY * currentAimRacio)
+	+ (transform.parent.localScale.y * eyeHeightRatio) - (transform.parent.localScale.y/2);
+	
+	// On save la position du player pour la frame suivante
+	parentLastPos = transform.parent.position;
 	
 	// Si currentAimRacio vaut 1 cela veu dire que le gun est en mode normal (fire2 not pressed)
 	if( currentAimRacio == 1)
