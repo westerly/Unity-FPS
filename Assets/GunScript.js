@@ -75,6 +75,9 @@ var gunAmountY : float = 0.5;
 var currentGunBobX : float;
 var currentGunBobY : float;
 
+// Les parties du modèle du gun
+var gunModelObject : GameObject;
+
 
 function Awake () {
 	countToThrow = -1;
@@ -89,6 +92,14 @@ function LateUpdate () {
 	
 	// Si l'arme est portée par le perso
 	if(beingHeld){
+	
+		// On set le layer 8 sur toute les parties du gun qui est tenu par le perso
+		// Permet au gun de ne pas traverser les murs grace au Kulling Mask
+		gunModelObject.layer = 8;
+        for (var child : Transform in gunModelObject.transform)
+        {
+        	child.gameObject.layer = 8;	 
+        }
 		
 		// On enlève l'influence de la gravité sur l'arme ainsi que le Collider sur la outside box
 		rigidbody.useGravity = false;
@@ -169,6 +180,16 @@ function LateUpdate () {
 	}
 	
 	if(!beingHeld){
+	
+		
+		// On set le layer 0 sur toute les parties du gun qui est tenu par le perso
+		// Permet au gun qui sont au sol de ne pas etre vu à travers les murs
+		gunModelObject.layer = 0;
+        for (var child : Transform in gunModelObject.transform)
+        {
+        	child.gameObject.layer = 0;	 
+        }
+	
 		// On active l'influence de la gravité sur l'arme ainsi que le Collider sur la outside box
 		rigidbody.useGravity = true;
 		outsideBox.GetComponent(Collider).enabled = true;
