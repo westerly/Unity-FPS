@@ -30,6 +30,7 @@ var rotateSpeed : float = 0.2;
 var holdHeight : float = -0.3;
 // holdSide est positif car on veut l'arme à droite du personnage
 var holdSide : float = 0.4;
+var holdFront : float = 0.5;
 
 // Lorsque cette variable vaut 1, l'arme est placé en mode "normal" à droite du perso, l'orsque elle vaut 0 elle est
 // placé devant le perso en mode "tir de précision"
@@ -169,7 +170,7 @@ function LateUpdate () {
 		// Multiplier le vecteur position de l'arme par le Quarternion(0, targetYRotation, 0) permet de lui faire faire une rotation sur l'axe des y d'une valeur de targetYRotation
 		// Cela permet de ne pas se retrouver avec le gun a gauche lorsque on fait tourner le perso
 		transform.position = cameraObject.transform.position + (Quaternion.Euler(targetXRotation, targetYRotation, 0)
-		 * Vector3(holdSide * racioHipHold + currentGunBobX, holdHeight * racioHipHold + currentGunBobY, 0)
+		 * Vector3(holdSide * racioHipHold + currentGunBobX, holdHeight * racioHipHold + currentGunBobY, holdFront)
 		// On ajoute cette ligne pour le recul du gun 
 		+ Quaternion.Euler(targetXRotation, targetYRotation, 0) * Vector3(0,0, currentRecoilZPos));
 		// On calcule la rotation du gun sur l'axe des x et des y avec un smoothDamp pour décaler avec la rotation de la camera. Ainsi on croit que l'arme est lourde.
